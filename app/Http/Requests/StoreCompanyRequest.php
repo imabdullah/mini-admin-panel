@@ -13,7 +13,7 @@ class StoreCompanyRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,7 +24,21 @@ class StoreCompanyRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'name'=> 'required|string|max:55',
+            'email'=> 'required|email|unique:companies,email',
+            'website'=>'max:100',
+            'logo' => [
+                'image',
+                'mimes:jpeg,png,jpg,gif',
+                function ($attribute, $value, $fail) {
+                    if ($value) {
+                        list($width, $height) = getimagesize($value);
+                        if ($width < 100 || $height < 100) {
+                            $fail("The $attribute must be at least 100x100 pixels.");
+                        }
+                    }
+                },
+            ],
         ];
     }
 }

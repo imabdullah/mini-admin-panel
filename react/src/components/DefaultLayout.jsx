@@ -44,7 +44,7 @@ export const DefaultLayout = () => {
         <div id="defaultLayout">
             <aside>
                 <Link to="/dashboard">Dashboard</Link>
-                <Link to="/dashboard">Companies</Link>
+                <Link to="/companies">Companies</Link>
                 <Link to="/dashboard">Employees</Link>
             </aside>
             <div className='content'>

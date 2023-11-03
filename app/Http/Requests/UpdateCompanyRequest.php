@@ -13,7 +13,7 @@ class UpdateCompanyRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,7 +24,9 @@ class UpdateCompanyRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'name'=> 'required|string|max:55',
+            'email'=> 'required|email|unique:companies,email,'.$this->id,
+            'website'=>'max:100'
         ];
     }
 }

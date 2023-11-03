@@ -229,6 +229,10 @@ table>tbody>tr>td {
     align-items: center;
 }
 
+.company-image {
+    width: 50px;
+}
+
 #defaultLayout main {
     padding: 2rem;
 }

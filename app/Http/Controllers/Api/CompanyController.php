@@ -31,6 +31,7 @@ class CompanyController extends Controller
     public function store(StoreCompanyRequest $request)
     {
         $data = $request->validated();
+        $data['logo'] = $this->handleFileUpload($request, 'logo');
         $company = Company::create($data);
         return response(new CompanyResource($company),201);
     }
@@ -43,7 +44,7 @@ class CompanyController extends Controller
      */
     public function show(Company $company)
     {
-        //
+        return new CompanyResource($company);
     }
 
     /**
@@ -56,6 +57,8 @@ class CompanyController extends Controller
     public function update(UpdateCompanyRequest $request, Company $company)
     {
         $data = $request->validated();
+        $data['logo'] = $this->handleFileUpload($request, 'logo');
+        
         $company->update($data);
         return new CompanyResource($company);
     }
@@ -70,5 +73,17 @@ class CompanyController extends Controller
     {
         $company->delete();
         return response("",204);
+    }
+
+    private function handleFileUpload($request, $fieldName)
+    {
+        if ($request->hasFile($fieldName)) {
+            $file = $request->file($fieldName);
+            $fileName = time() . '_' . $file->getClientOriginalName();
+            $file->storeAs('public', $fileName);
+            return $fileName;
+        }
+
+        return null; 
     }
 }
