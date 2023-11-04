@@ -8,16 +8,20 @@ use App\Http\Requests\StoreCompanyRequest;
 use App\Http\Requests\UpdateCompanyRequest;
 use App\Http\Resources\CompanyResource;
 use App\Repositories\CompanyRepository;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\NotifyCompany;
+use App\Services\EmailService;
 
 class CompanyController extends Controller
 {
     protected $companyRepository;
-
-    public function __construct(CompanyRepository $companyRepository)
+    protected $emailService;
+    public function __construct(CompanyRepository $companyRepository, EmailService $emailService)
     {
         $this->companyRepository = $companyRepository;
+        $this->emailService = $emailService;
     }
-    
+
     /**
      * Display a listing of the resource.
      *
@@ -40,6 +44,9 @@ class CompanyController extends Controller
     {
         $data = $request->validated();
         $company = $this->companyRepository->createCompany($data);
+
+        $this->emailService->sendCompanyCreationNotification($company);
+        //Mail::to($company->email)->send(new NotifyCompany($company->name));
         return response(new CompanyResource($company), 201);
     }
 
@@ -79,7 +86,4 @@ class CompanyController extends Controller
         $this->companyRepository->deleteCompany($company);
         return response('', 204);
     }
-
-
-
 }
