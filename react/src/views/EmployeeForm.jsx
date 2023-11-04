@@ -88,7 +88,7 @@ export const EmployeeForm = () => {
                         <label>Select Company</label>
                         <select onChange={ev => setEmployee({ ...employee, company_id: ev.target.value })} >
                             {companies.map((company, index) => (
-                                <option key={index} value={company.id}>
+                                <option key={index} value={company.id} selected={company.id === employee.company_id}>
                                     {company.name}
                                 </option>
                             ))}
