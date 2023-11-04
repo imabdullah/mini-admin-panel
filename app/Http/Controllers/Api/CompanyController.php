@@ -7,9 +7,17 @@ use App\Models\Company;
 use App\Http\Requests\StoreCompanyRequest;
 use App\Http\Requests\UpdateCompanyRequest;
 use App\Http\Resources\CompanyResource;
+use App\Repositories\CompanyRepository;
 
 class CompanyController extends Controller
 {
+    protected $companyRepository;
+
+    public function __construct(CompanyRepository $companyRepository)
+    {
+        $this->companyRepository = $companyRepository;
+    }
+    
     /**
      * Display a listing of the resource.
      *
@@ -18,7 +26,7 @@ class CompanyController extends Controller
     public function index()
     {
         return CompanyResource::collection(
-            Company::query()->orderBy('id','desc')->paginate(10)
+            $this->companyRepository->getAllCompanies()
         );
     }
 
@@ -31,9 +39,8 @@ class CompanyController extends Controller
     public function store(StoreCompanyRequest $request)
     {
         $data = $request->validated();
-        $data['logo'] = $this->handleFileUpload($request, 'logo');
-        $company = Company::create($data);
-        return response(new CompanyResource($company),201);
+        $company = $this->companyRepository->createCompany($data);
+        return response(new CompanyResource($company), 201);
     }
 
     /**
@@ -57,10 +64,8 @@ class CompanyController extends Controller
     public function update(UpdateCompanyRequest $request, Company $company)
     {
         $data = $request->validated();
-        $data['logo'] = $this->handleFileUpload($request, 'logo');
-        
-        $company->update($data);
-        return new CompanyResource($company);
+        $updatedCompany = $this->companyRepository->updateCompany($company, $data);
+        return new CompanyResource($updatedCompany);
     }
 
     /**
@@ -71,19 +76,10 @@ class CompanyController extends Controller
      */
     public function destroy(Company $company)
     {
-        $company->delete();
-        return response("",204);
+        $this->companyRepository->deleteCompany($company);
+        return response('', 204);
     }
 
-    private function handleFileUpload($request, $fieldName)
-    {
-        if ($request->hasFile($fieldName)) {
-            $file = $request->file($fieldName);
-            $fileName = time() . '_' . $file->getClientOriginalName();
-            $file->storeAs('public', $fileName);
-            return $fileName;
-        }
 
-        return null; 
-    }
+
 }

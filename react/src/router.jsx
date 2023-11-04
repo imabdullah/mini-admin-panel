@@ -5,6 +5,8 @@ import { DefaultLayout } from "./components/DefaultLayout.jsx";
 import GuestLayout from "./components/GuestLayout.jsx";
 import Company from "./views/Company.jsx";
 import CompanyForm from "./views/CompanyForm.jsx";
+import Employee from "./views/Employee.jsx";
+import { EmployeeForm } from "./views/EmployeeForm.jsx";
 
 const router = createBrowserRouter([
 
@@ -37,7 +39,19 @@ const router = createBrowserRouter([
             {
                 path: '/companies/:id',
                 element: <CompanyForm key="companyUpdate" />
-            }
+            },
+            {
+                path: '/employees',
+                element: <Employee />,
+            },
+            {
+                path: '/employees/new',
+                element: <EmployeeForm key="employeeCreate" />
+            },
+            {
+                path: '/employees/:id',
+                element: <EmployeeForm key="employeeUpdate" />
+            },
         ]
     }
 

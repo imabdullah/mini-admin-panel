@@ -1,21 +1,21 @@
+
 import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom';
 import axiosClient from '../axios-client'
 
-const Company = () => {
-
-    const [companies, setCompanies] = useState([]);
+const Employee = () => {
+    const [employees, setEmployees] = useState([]);
     const [loading, setLoading] = useState(false);
 
     const [page, setPage] = useState(0);
     const [pageSize, setPageSize] = useState(10);
     const [totalResults, setTotalResults] = useState(0);
 
-    const getCompanies = (curPage) => {
+    const getEmployees = (curPage) => {
         setLoading(true);
-        axiosClient.get(`/companies?page=${curPage}`).then(({ data }) => {
+        axiosClient.get(`/employees?page=${curPage}`).then(({ data }) => {
             setLoading(false);
-            setCompanies(data.data);
+            setEmployees(data.data);
             setTotalResults(data.meta.total);
             setPageSize(data.meta.per_page);
             setPage(data.meta.current_page)
@@ -24,28 +24,28 @@ const Company = () => {
         })
     }
     useEffect(() => {
-        getCompanies(page);
+        getEmployees(page);
     }, [])
 
     const onDelete = (u) => {
         if (!window.confirm("Are you sure you want to delete?")) {
             return
         }
-        axiosClient.delete(`/companies/${u.id}`).then(() => {
-            getCompanies();
+        axiosClient.delete(`/employees/${u.id}`).then(() => {
+            getEmployees();
         })
     }
 
     const fetchNextPage = () => {
         if (!(page + 1 > Math.ceil(totalResults / pageSize))) {
-            getCompanies(page + 1)
+            getEmployees(page + 1)
         }
 
 
     }
     const fetchPreviousPage = () => {
         if (page > 1) {
-            getCompanies(page - 1)
+            getEmployees(page - 1)
         }
     }
 
@@ -53,8 +53,8 @@ const Company = () => {
     return (
         <div>
             <div className="main-content" >
-                <h1>Companies</h1>
-                <Link to="/companies/add" className='btn-add'>Add New</Link>
+                <h1>Employees</h1>
+                <Link to="/employees/add" className='btn-add'>Add New</Link>
             </div>
 
             <div className='card animated fadeInDown'>
@@ -62,9 +62,9 @@ const Company = () => {
                     <thead>
                         <tr>
                             <td>Id</td>
-                            <td>Logo</td>
-                            <td>Name</td>
-                            <td>Website</td>
+                            <td>Full Name</td>
+                            <td>Company</td>
+                            <td>Phone</td>
                             <td>Email</td>
                             <td>Created at</td>
                             <td>Action</td>
@@ -78,31 +78,25 @@ const Company = () => {
                         </tbody>
                     }
                     {!loading && <tbody>
-                        {companies.map(c => (
+                        {employees.map(e => (
 
-                            <tr key={c.id}>
-                                <td>{c.id}</td>
-                                <td>
-                                    <img className="company-image"
-                                        src={
+                            <tr key={e.id}>
+                                <td>{e.id}</td>
 
-                                            `${import.meta.env.VITE_API_BASE_URL}${c.logo != null ? '/storage/' + c.logo : '/images/default_placeholder.png'}`}
-                                    />
-                                </td>
-                                <td>{c.name}</td>
-                                <td>{c.website}</td>
-                                <td>{c.email}</td>
-                                <td>{c.created_at}</td>
+                                <td>{e.first_name}{e.last_name}</td>
+                                <td>{e.company.name}</td>
+                                <td>{e.phone}</td>
+                                <td>{e.email}</td>
+                                <td>{e.created_at}</td>
                                 <td>
-                                    <Link className="btn-edit" to={'/companies/' + c.id}>Edit</Link> &nbsp;
-                                    <button onClick={ev => onDelete(c)} className="btn-delete">Delete</button>
+                                    <Link className="btn-edit" to={'/employees/' + e.id}>Edit</Link> &nbsp;
+                                    <button onClick={ev => onDelete(e)} className="btn-delete">Delete</button>
                                 </td>
                             </tr>
                         ))}
                     </tbody>
                     }
                 </table>
-
                 {!loading && <div className="pagination-btns">
                     <button disabled={page <= 1 ? true : false} type="button" className="btn btn-dark" onClick={fetchPreviousPage}>&larr; Previous</button>
 
@@ -110,10 +104,9 @@ const Company = () => {
                         type="button" className="btn btn-dark" onClick={fetchNextPage}>Next &rarr;</button>
                 </div>
                 }
-
             </div>
         </div>
     )
 }
 
-export default Company
+export default Employee
