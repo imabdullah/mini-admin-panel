@@ -29,14 +29,9 @@ export const DefaultLayout = () => {
         // }
         //const res = axios(config);
 
-        console.log("callledd");
-        console.log(localStorage.getItem('ACCESS_TOKEN'))
-
         axiosClient.get('/user').then(({ data }) => {
-            console.log(data)
             setUser(data)
         }).catch(err => {
-            console.log("im err")
             console.log(err)
         })
     }, [])
@@ -50,7 +45,7 @@ export const DefaultLayout = () => {
             <div className='content'>
                 <header>
                     <div>
-                        Header
+                        {import.meta.env.VITE_APP_NAME}
                     </div>
                     <div>
                         {user.name}

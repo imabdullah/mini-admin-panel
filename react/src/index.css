@@ -124,6 +124,12 @@ table>tbody>tr>td {
     white-space: nowrap;
 }
 
+.main-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center
+}
+
 .card {
     background-color: #FFF;
     border-radius: 0.5rem;
@@ -233,6 +239,19 @@ table>tbody>tr>td {
     width: 50px;
 }
 
+.btn:disabled {
+    background-color: #ccc;
+    color: #666;
+    cursor: not-allowed;
+
+}
+
+.pagination-btns {
+    margin: 5px;
+    display: flex;
+    justify-content: space-between;
+}
+
 #defaultLayout main {
     padding: 2rem;
 }
@@ -248,6 +267,7 @@ table>tbody>tr>td {
     -webkit-animation-name: fadeInDown;
     animation-name: fadeInDown;
 }
+
 
 @keyframes fadeInDown {
     0% {

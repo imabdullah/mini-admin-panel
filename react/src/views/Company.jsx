@@ -7,20 +7,24 @@ const Company = () => {
     const [companies, setCompanies] = useState([]);
     const [loading, setLoading] = useState(false);
 
-    const getCompanies = () => {
-        console.log("companins..")
+    const [page, setPage] = useState(0);
+    const [pageSize, setPageSize] = useState(10);
+    const [totalResults, setTotalResults] = useState(0);
+
+    const getCompanies = (curPage) => {
         setLoading(true);
-        axiosClient.get('companies').then(({ data }) => {
-            console.log(data);
+        axiosClient.get(`/companies?page=${curPage}`).then(({ data }) => {
             setLoading(false);
             setCompanies(data.data);
-            console.log(companies);
+            setTotalResults(data.meta.total);
+            setPageSize(data.meta.per_page);
+            setPage(data.meta.current_page)
         }).catch(err => {
             setLoading(false);
         })
     }
     useEffect(() => {
-        getCompanies();
+        getCompanies(page);
     }, [])
 
     const onDelete = (u) => {
@@ -33,9 +37,23 @@ const Company = () => {
         })
     }
 
+    const fetchNextPage = () => {
+        if (!(page + 1 > Math.ceil(totalResults / pageSize))) {
+            getCompanies(page + 1)
+        }
+
+
+    }
+    const fetchPreviousPage = () => {
+        if (page > 1) {
+            getCompanies(page - 1)
+        }
+    }
+
+
     return (
         <div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div className="main-content" >
                 <h1>Companies</h1>
                 <Link to="/companies/add" className='btn-add'>Add New</Link>
             </div>
@@ -65,7 +83,13 @@ const Company = () => {
 
                             <tr key={c.id}>
                                 <td>{c.id}</td>
-                                <td><img className="company-image" src={`${import.meta.env.VITE_API_BASE_URL}/storage/${c.logo}`} /></td>
+                                <td>
+                                    <img className="company-image"
+                                        src={
+
+                                            `${import.meta.env.VITE_API_BASE_URL}${c.logo != null ? '/storage/' + c.logo : '/images/default_placeholder.png'}`}
+                                    />
+                                </td>
                                 <td>{c.name}</td>
                                 <td>{c.website}</td>
                                 <td>{c.email}</td>
@@ -79,6 +103,14 @@ const Company = () => {
                     </tbody>
                     }
                 </table>
+
+                {!loading && <div className="pagination-btns">
+                    <button disabled={page <= 1 ? true : false} type="button" className="btn btn-dark" onClick={fetchPreviousPage}>&larr; Previous</button>
+
+                    <button disabled={page + 1 > Math.ceil(totalResults / pageSize) ? true : false}
+                        type="button" className="btn btn-dark" onClick={fetchNextPage}>Next &rarr;</button>
+                </div>
+                }
 
             </div>
         </div>
