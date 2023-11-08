@@ -91,6 +91,7 @@ export const EmployeeForm = () => {
                                 <option key={index} value={company.id} selected={company.id === employee.company_id}>
                                     {company.name}
                                 </option>
+
                             ))}
                         </select>
                         <button className='btn btn-save'>Save</button>
